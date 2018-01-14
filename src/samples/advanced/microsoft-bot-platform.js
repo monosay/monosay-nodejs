@@ -1,15 +1,6 @@
-var restify = require('restify');
-var builder = require('botbuilder');
-var monosay = require('../lib/monosay');
-
-process.on('uncaughtException', function(err) {
-    console.log('Caught exception: ' + err);
-});
-
-var botAppId = process.env.BOT_MS_APP_ID;
-var botAppPassword = process.env.BOT_MS_APP_PASSWORD;
-
-console.log("Your BOT_MS_APP_ID is " + botAppId);
+const restify = require('restify');
+const builder = require('botbuilder');
+const monosay = require('../../').usebotframework(process.env.MONOSAY_BOT_TOKEN);
 
 const ACTIONS = {
     REMOVE: "Remove",
@@ -17,18 +8,18 @@ const ACTIONS = {
     ACCEPT: "Accept"
 };
 
-var connector = new builder.ChatConnector({
-    appId: botAppId,
-    appPassword: botAppPassword
-});
-
-var inMemoryStorage = new builder.MemoryBotStorage();
-var bot = new builder.UniversalBot(connector).set("storage", inMemoryStorage);
 const DATA = {
     COLLECTION_NAME: "thoughts"
 };
 
-monosay.usebotframework(bot, process.env.MONOSAY_BOT_TOKEN);
+var connector = new builder.ChatConnector({
+    appId: process.env.BOT_MS_APP_ID,
+    appPassword: process.env.BOT_MS_APP_PASSWORD
+});
+
+var bot = new builder.UniversalBot(connector).set("storage", monosay.storage);
+
+monosay.init(bot);
 
 bot.dialog("/", [
     function(session) {
@@ -43,6 +34,7 @@ bot.dialog("/", [
     function(session, results) {
         if (results.response != null) {
             session.send("I'm saving this: " + results.response);
+
             monosay
                 .data(DATA.COLLECTION_NAME)
                 .save({
@@ -171,7 +163,9 @@ bot.dialog("/goodbye", function(session) {
     session.send("See you later! 🤗");
     session.endConversation();
     session.endDialog();
-    monosay.endsession();
+    monosay.end(session);
+}).triggerAction({
+    matches: /\/goodbye/i
 });
 
 bot.dialog('/help', [
@@ -182,7 +176,9 @@ bot.dialog('/help', [
             "* goodbye - End this conversation.\n" +
             "* help - Displays these commands.");
     }
-]);
+]).triggerAction({
+    matches: /\/help/i
+});;
 
 var server = restify.createServer();
 server.post('/', connector.listen());

@@ -1,6 +1,6 @@
 {
     "name": "monosay",
-    "version": "1.0.0",
+    "version": "1.0.0-beta01",
     "description": "Your bot's powerfull friend.",
     "main": "index.js",
     "scripts": {
@@ -10,5 +10,9 @@
     "license": "ISC",
     "dependencies": {
         "request": "^2.83.0"
+    },
+    "devDependencies": {
+        "botbuilder": "^3.13.1",
+        "restify": "^6.3.4"
     }
 }
