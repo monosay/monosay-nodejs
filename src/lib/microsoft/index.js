@@ -47,6 +47,7 @@ module.exports = function(token, userConfig) {
         },
         start: base.start,
         end: base.end,
+        user: base.user,
         data: function(name) {
             return data(request, name);
         },

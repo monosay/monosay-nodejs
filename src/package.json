@@ -1,10 +1,14 @@
 {
     "name": "monosay",
-    "version": "1.0.0-beta01",
+    "version": "1.0.0-beta03",
     "description": "Your bot's powerfull friend.",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://gitlab.com/monosay/monosay-nodejs"
     },
     "author": "",
     "license": "ISC",

@@ -1,6 +1,7 @@
 const restify = require('restify');
 const builder = require('botbuilder');
 const monosay = require('../../').usebotframework(process.env.MONOSAY_BOT_TOKEN);
+const request = require('request');
 
 const ACTIONS = {
     REMOVE: "Remove",
@@ -21,8 +22,30 @@ var bot = new builder.UniversalBot(connector).set("storage", monosay.storage);
 
 monosay.init(bot);
 
+function update_monosay_user_info(session) {
+    request.get({
+        url: process.env.BOT_FB_GRAPHAPI_URL + session.message.user.id + "?fields=id,name,picture,email,first_name,last_name",
+        headers: {
+            Authorization: "Bearer " + process.env.BOT_FB_TOKEN
+        }
+    }, function(err, httpResponse, body) {
+        if (!err && httpResponse.statusCode == 200 && body) {
+            var user = JSON.parse(body);
+            monosay.user({
+                channelUserId: user.id,
+                name: user.first_name,
+                surname: user.last_name,
+                profilePhotoUrl: user.picture.data.url,
+                email: user.email
+            }, /*success callback*/ null, /*error callback*/ null);
+        }
+    });
+}
+
 bot.dialog("/", [
     function(session) {
+        update_monosay_user_info(session);
+
         try {
             builder.Prompts.text(session, "Hi there! Can you share your thoughts with me?");
         } catch (error) {
@@ -64,7 +87,9 @@ bot.dialog("/", [
 
 bot.dialog('/remove', [
     function(session, args) {
-        builder.Prompts.choice(session, "I will remove your last data. Are you sure?", ACTIONS.REMOVE + "|" + ACTIONS.CANCEL, { listStyle: builder.ListStyle.button })
+        builder.Prompts.choice(session, "I will remove your last data. Are you sure?", ACTIONS.REMOVE + "|" + ACTIONS.CANCEL, {
+            listStyle: builder.ListStyle.button
+        })
     },
     function(session, results) {
         if (results.response.entity === ACTIONS.REMOVE) {
@@ -127,7 +152,9 @@ bot.dialog('/get', [
 
 bot.dialog('/update', [
     function(session, args) {
-        builder.Prompts.choice(session, "I will remove your last data. Are you sure?", [ACTIONS.REMOVE, ACTIONS.CANCEL], { listStyle: builder.ListStyle.button })
+        builder.Prompts.choice(session, "I will remove your last data. Are you sure?", [ACTIONS.REMOVE, ACTIONS.CANCEL], {
+            listStyle: builder.ListStyle.button
+        })
     },
     function(session, results) {
         if (results.response.entity === ACTIONS.REMOVE) {

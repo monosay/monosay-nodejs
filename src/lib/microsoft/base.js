@@ -18,6 +18,43 @@ module.exports = function(request) {
     }
 
     return {
+        user: function(data, successCallback, errorCallback) {
+            try {
+                request({
+                    url: "/channelusers",
+                    body: JSON.stringify(data),
+                    method: 'POST'
+                }, function(error, response, body) {
+                    if (error) {
+                        errorCallback(error);
+                    } else {
+                        var json = null;
+                        var data = null;
+                        if (body) {
+                            var data = JSON.parse(body);
+                        }
+
+                        if (response.statusCode == 201 || response.statusCode == 200) {
+                            if (data && data.success) {
+                                if (successCallback) {
+                                    successCallback(data)
+                                }
+                            } else {
+                                if (errorCallback) {
+                                    errorCallback(data);
+                                }
+                            }
+                        } else {
+                            if (errorCallback) {
+                                errorCallback(data);
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        },
         /**
          * Initialization.
          * @param session object for the current conversation.
