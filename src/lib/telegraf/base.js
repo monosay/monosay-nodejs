@@ -34,7 +34,7 @@ module.exports = function(request) {
                             var data = JSON.parse(body);
                         }
 
-                        if (response.statusCode == 201 && response.statusCode == 200) {
+                        if (response.statusCode == 201 || response.statusCode == 200) {
                             if (data && data.success) {
                                 if (successCallback) {
                                     successCallback(data)
@@ -75,7 +75,7 @@ module.exports = function(request) {
                 }, function(error, response, body) {
                     if (error) {
                         next(error);
-                    } else if (response.statusCode != 200 && response.statusCode != 201) {
+                    } else if (response.statusCode != 200 || response.statusCode != 201) {
                         next(new Error("Error from MonoSay API"));
                     } else {
                         next();
@@ -104,7 +104,7 @@ module.exports = function(request) {
                 }, function(error, response, body) {
                     if (error) {
                         next(error);
-                    } else if (response.statusCode != 200 && response.statusCode != 201) {
+                    } else if (response.statusCode != 200 || response.statusCode != 201) {
                         next(new Error("Error from MonoSay API"));
                     } else {
                         next();

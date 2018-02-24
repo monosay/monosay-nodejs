@@ -17,6 +17,7 @@
     },
     "devDependencies": {
         "botbuilder": "^3.13.1",
-        "restify": "^6.3.4"
+        "restify": "^6.3.4",
+        "telegraf": "^3.17.8"
     }
 }
