@@ -13,6 +13,18 @@ monosay.init(controller);
 
 var bot = controller.spawn({});
 
+controller.on('message_received', function(bot, message) {
+    bot.getMessageUser(message, function(err, user) {
+        monosay.user({
+            channelUserId: user.id,
+            name: user.first_name,
+            surname: user.last_name,
+            email: user.email
+        }, /*success callback*/ null, /*error callback*/ null);
+    });
+    return true;
+});
+
 controller.setupWebserver(process.env.port, function(err, webserver) {
     controller.createWebhookEndpoints(controller.webserver, bot, function() {
         console.log('Your bot is online.');

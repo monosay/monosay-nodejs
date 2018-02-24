@@ -1,6 +1,6 @@
 {
     "name": "monosay",
-    "version": "1.0.0-beta03",
+    "version": "1.0.0-beta04",
     "description": "Your bot's powerfull friend.",
     "main": "index.js",
     "scripts": {
@@ -17,6 +17,7 @@
     },
     "devDependencies": {
         "botbuilder": "^3.13.1",
+        "botkit": "^0.6.11",
         "restify": "^6.3.4",
         "telegraf": "^3.17.8"
     }
