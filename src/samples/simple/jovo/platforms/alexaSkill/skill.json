@@ -1,0 +1,29 @@
+{
+	"manifest": {
+		"publishingInformation": {
+			"locales": {
+				"en-US": {
+					"summary": "Sample Short Description",
+					"examplePhrases": [
+						"Alexa open hello world"
+					],
+					"name": "jovo",
+					"description": "Sample Full Description"
+				}
+			},
+			"isAvailableWorldwide": true,
+			"testingInstructions": "Sample Testing Instructions.",
+			"category": "EDUCATION_AND_REFERENCE",
+			"distributionCountries": []
+		},
+		"apis": {
+			"custom": {
+				"endpoint": {
+					"sslCertificateType": "Wildcard",
+					"uri": "https://webhook.jovo.cloud/0045d3df-0f2a-429e-ac45-356dcec0b408"
+				}
+			}
+		},
+		"manifestVersion": "1.0"
+	}
+}

@@ -36,6 +36,14 @@ module.exports = function(token, userConfig) {
 
     return {
         init: function(bot) {
+            bot.use(function({ message, update }, next) {
+                if (!message) {
+                    return next();
+                }
+                // message.text = aliasToCommand(message.text);
+                next()
+            });
+
             bot.use((ctx, next) => {
                 try {
                     var body = _getContextJson(ctx);
@@ -49,21 +57,41 @@ module.exports = function(token, userConfig) {
                         } else if (response.statusCode != 200 && response.statusCode != 201) {
                             console.log("Error from MonoSay API");
                         } else {
-                            next(ctx).then((nctx, lctx) => {
+                            next(ctx).then((nctx) => {
                                 if (!nctx) {
                                     return;
                                 }
-                                request({
-                                    url: "/platform",
-                                    body: _getContextJson(nctx, true),
-                                    method: 'POST'
-                                }, function(error, response, body) {
-                                    if (error) {
-                                        console.error(error);
-                                    } else if (response.statusCode != 200 && response.statusCode != 201) {
-                                        console.log("Error from MonoSay API");
-                                    } else {}
-                                });
+
+                                if (Array.isArray(nctx)) {
+                                    nctx.map((nextitem) => {
+                                        if (!nextitem) {
+                                            return;
+                                        }
+                                        request({
+                                            url: "/platform",
+                                            body: _getContextJson(nextitem, true),
+                                            method: 'POST'
+                                        }, function(error, response, body) {
+                                            if (error) {
+                                                console.error(error);
+                                            } else if (response.statusCode != 200 && response.statusCode != 201) {
+                                                console.log("Error from MonoSay API");
+                                            } else {}
+                                        });
+                                    });
+                                } else {
+                                    request({
+                                        url: "/platform",
+                                        body: _getContextJson(nctx, true),
+                                        method: 'POST'
+                                    }, function(error, response, body) {
+                                        if (error) {
+                                            console.error(error);
+                                        } else if (response.statusCode != 200 && response.statusCode != 201) {
+                                            console.log("Error from MonoSay API");
+                                        } else {}
+                                    });
+                                }
                             });
                         }
                     });

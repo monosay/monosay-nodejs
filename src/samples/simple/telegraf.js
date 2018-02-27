@@ -16,11 +16,26 @@ bot.start((ctx) => {
     return ctx.reply('Welcome!')
 })
 
+bot.catch((err) => {
+    console.log('Ooops', err)
+});
+
 bot.command('help', (ctx) => ctx.reply('Try send a sticker!'))
 bot.hears('hi', (ctx) => ctx.reply('Hey there!'))
 bot.hears('who am i', (ctx) => ctx.reply('I know who you are! 😌 You are! 😗'))
 bot.hears('You know nothing Jon Snow!', (ctx) => ctx.reply('See you later! 😎 But I\'m not John Snow!'))
 bot.hears(/buy/i, (ctx) => ctx.reply('Buy-buy!'))
 bot.on('sticker', (ctx) => ctx.reply('👍'))
+
+//  Burada direk mesaj ve reply monosay'de gözükmüyor.
+bot.on('text', (ctx) => {
+    return Promise.all([
+        ctx.telegram.sendMessage(ctx.message.chat.id, `Hey! ${ctx.from.first_name},`),
+        ctx.reply('This is a text!')
+    ])
+})
+
+
+//bot.on('text', (ctx) => ctx.reply('Hello World'))
 
 bot.startPolling()

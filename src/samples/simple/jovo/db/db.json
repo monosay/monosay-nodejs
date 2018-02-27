@@ -1,0 +1,35 @@
+[
+	{
+		"userId": "DIALOGFLOW-DEBUGGING-USER-ID",
+		"userData": {
+			"data": {},
+			"metaData": {
+				"createdAt": "2018-02-27T17:21:34.990Z",
+				"lastUsedAt": "2018-02-27T17:22:13.816Z",
+				"sessionsCount": 2
+			}
+		}
+	},
+	{
+		"userId": "ABwppHFCrkzRuNBJjLUXT3RURQar0kbtt0GQwPnIwUExX8O02QbUSiqWu6n7SnbnGyRwwk8LOCTvgKUBV2nsiJn8W2PW",
+		"userData": {
+			"data": {},
+			"metaData": {
+				"createdAt": "2018-02-27T17:26:50.941Z",
+				"lastUsedAt": "2018-02-27T21:31:15.489Z",
+				"sessionsCount": 39
+			}
+		}
+	},
+	{
+		"userId": "amzn1.ask.account.AGKIMDJE3QPFHAQERZAGGZMZ4ELV6M7BXM6RRYFLUPEXDGQDE5QU7J4WYC5SOULKOZWF4DVVYJ3I7BNHUFUWW5ZAEUCV3ZTEOFTUDUZS35UL6HQVBYSUSAOXO4FWO42CMXKYXKCPFX4L2PSMDIDIR5QICWZMPTK3TTF33BW43IHPNIMI4MI2YAKO46V33XWMIT7MFZGJ7XYRUWY",
+		"userData": {
+			"data": {},
+			"metaData": {
+				"createdAt": "2018-02-27T21:57:16.404Z",
+				"lastUsedAt": "2018-02-27T22:04:28.843Z",
+				"sessionsCount": 3
+			}
+		}
+	}
+]
