@@ -6,7 +6,7 @@
 
 const { App } = require('jovo-framework');
 const monosay = require('../../../../').usejovo("a9f3996c12164226879f85a6029eb320", {
-    apiUrl: "http://localhost:8090/v1/"
+    //apiUrl: "http://localhost:8090/v1/"
 });
 
 const config = {
@@ -15,8 +15,6 @@ const config = {
 
 const app = new App(config);
 monosay.init(app);
-
-app.addDashbotGoogleAction("4mvQzXsVWwhO991Z1RsGs1m4Z1pbdRNB87V5yDIs");
 
 // =================================================================================
 // App Logic
