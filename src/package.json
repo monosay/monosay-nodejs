@@ -6,6 +6,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "publisher": "monosay",
     "repository": {
         "type": "git",
         "url": "https://gitlab.com/monosay/monosay-nodejs"
