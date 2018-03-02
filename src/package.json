@@ -1,6 +1,6 @@
 {
     "name": "monosay",
-    "version": "1.0.0-beta04",
+    "version": "1.0.0",
     "description": "Your bot's powerfull friend.",
     "main": "index.js",
     "scripts": {
