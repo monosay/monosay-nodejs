@@ -1,17 +1,17 @@
 var builder = require('botbuilder');
-const monosay = require('../../').usebotframework("ASDKAWHDGAJWGDAWDHAW");
+const monosay = require('../../').usebotframework(process.env.MONOSAY_BOT_TOKEN);
 
 var connector = new builder.ConsoleConnector().listen();
 var bot = new builder.UniversalBot(connector, function(session) {
     session.send("You said: %s", session.message.text);
     // Data
-    monosay.data("etkinlik_geribildirim").save({
-        'dusuncesi': session.message.text,
-        'kullanici_id': session.message.user.id
+    monosay.data("feedback").save({
+        'thoughts': session.message.text,
+        'userid': session.message.user.id
     }, function() {
-        session.send("Teşekkürler, geri bildirimini aldım.");
+        session.send("Thank you!");
     }, function() {
-        session.send("Bir problem var. Lütfen tekrar dene.");
+        session.send("Something is wrong.");
     });
     // Event
     monosay.event(session, "USER_SAVED_THOUGHTS", { userid: session.message.id });

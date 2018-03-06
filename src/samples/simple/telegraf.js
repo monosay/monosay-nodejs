@@ -1,5 +1,5 @@
 const Telegraf = require('telegraf')
-const monosay = require('../../').usetelegraf("3e4f49ad6dd446928e2bfab6d6992144");
+const monosay = require('../../').usetelegraf(process.env.MONOSAY_BOT_TOKEN);
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN)
 
