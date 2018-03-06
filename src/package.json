@@ -1,15 +1,16 @@
 {
     "name": "monosay",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Your bot's powerfull friend.",
     "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
+    "scripts": {},
     "publisher": "monosay",
     "repository": {
         "type": "git",
-        "url": "https://gitlab.com/monosay/monosay-nodejs"
+        "url": "git+ssh://git@github.com/monosay/monosay-nodejs.git"
+    },
+    "bugs": {
+        "url": "https://github.com/monosay/monosay-nodejs/issues"
     },
     "author": "",
     "license": "ISC",
@@ -21,5 +22,17 @@
         "botkit": "^0.6.11",
         "restify": "^6.3.4",
         "telegraf": "3.18.0"
-    }
+    },
+    "keywords": [
+        "messenger",
+        "telegram",
+        "botbuilder",
+        "jovo",
+        "botframework",
+        "monosay",
+        "bot",
+        "chatbot",
+        "bot analytics",
+        "chatbot analytics"
+    ]
 }
