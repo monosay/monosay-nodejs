@@ -1,4 +1,4 @@
-# {mono}say - Intelligent Data & Analytics Platform 
+# {mono}say - Intelligent Data & Analytics Bot Platform 
 
 Using a Bot Framework can help you to built a bot for all platforms. 
 
@@ -8,7 +8,7 @@ They provide you an API and schema to build your bot, send messages (text, list,
 
 [Visit Documentation](https://docs.monosay.com)
 
-### What can I do with it?
+### What can I do with it?
 
 It helps a developer to build a bot for all other platforms. It also offers a programming language that you can be stronger with.
 
