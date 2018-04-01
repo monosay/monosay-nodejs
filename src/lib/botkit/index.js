@@ -21,7 +21,7 @@ module.exports = function(token, userConfig) {
     const base = require("./base")(request);
     const data = require("./data");
     const event = require("./event");
-    const storage = require("./storage").MonoSayBotStorage();
+    const storage = require("./storage");
 
     _getContextJson = function(message) {
         return JSON.stringify({

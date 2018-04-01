@@ -1,69 +1,133 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var MonoSayBotStorage = (function() {
-    function MonoSayBotStorage() {
-        this.userStore = {};
-        this.conversationStore = {};
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var async = require("async");
+
+var MonoSayBotStorage = (function () {
+  function MonoSayBotStorage(monosay) {
+    this.monosay = monosay;
+  }
+  MonoSayBotStorage.prototype.getData = function (context, callback) {
+    var endpoints = [];
+
+    if (context.userId) {
+      if (context.persistUserData) {
+        endpoints.push({
+          url: `state/channeluser/${context.userId}`,
+          property: 'userData'
+        });
+      }
+      if (context.conversationId) {
+        endpoints.push({
+          url: `state/channeluser/${context.userId}/conversation/${context.conversationId}`,
+          property: 'privateConversationData'
+        });
+      }
     }
-    MonoSayBotStorage.prototype.getData = function(context, callback) {
-        var data = {};
-        if (context.userId) {
-            if (context.persistUserData) {
-                if (this.userStore.hasOwnProperty(context.userId)) {
-                    data.userData = JSON.parse(this.userStore[context.userId]);
-                } else {
-                    data.userData = null;
-                }
-            }
-            if (context.conversationId) {
-                var key = context.userId + ':' + context.conversationId;
-                if (this.conversationStore.hasOwnProperty(key)) {
-                    data.privateConversationData = JSON.parse(this.conversationStore[key]);
-                } else {
-                    data.privateConversationData = null;
-                }
-            }
-        }
-        if (context.persistConversationData && context.conversationId) {
-            if (this.conversationStore.hasOwnProperty(context.conversationId)) {
-                data.conversationData = JSON.parse(this.conversationStore[context.conversationId]);
+    if (context.persistConversationData && context.conversationId) {
+      endpoints.push({
+        url: `state/conversation/${context.conversationId}`,
+        property: 'conversationData'
+      });
+    }
+    // *
+    var data = {};
+    var monosay = this.monosay;
+    async.each(endpoints, function (endpoint, cb) {
+      monosay.request(endpoint.url, function (error, response, body) {
+        if (error) {
+          cb(error);
+        } else {
+          var json = null;
+          var bodyData = null;
+          if (body) {
+            bodyData = JSON.parse(body);
+          }
+
+          if (response.statusCode == 201 || response.statusCode == 200) {
+            if (bodyData && bodyData.success) {
+              data[endpoint.property] = bodyData.data;
+              cb(null);
             } else {
-                data.conversationData = null;
+              cb(bodyData.message || bodyData.internalMessage);
             }
+          } else {
+            cb(`${request.statusCode} ${request.statusMessage}`);
+          }
         }
+      });
+    }, function (err) {
+      if (!err) {
         callback(null, data);
-    };
-    MonoSayBotStorage.prototype.saveData = function(context, data, callback) {
-        if (context.userId) {
-            if (context.persistUserData) {
-                this.userStore[context.userId] = JSON.stringify(data.userData || {});
-            }
-            if (context.conversationId) {
-                var key = context.userId + ':' + context.conversationId;
-                this.conversationStore[key] = JSON.stringify(data.privateConversationData || {});
-            }
-        }
-        if (context.persistConversationData && context.conversationId) {
-            this.conversationStore[context.conversationId] = JSON.stringify(data.conversationData || {});
-        }
-        callback(null);
-    };
-    MonoSayBotStorage.prototype.deleteData = function(context) {
-        if (context.userId && this.userStore.hasOwnProperty(context.userId)) {
-            if (context.conversationId) {
-                if (this.conversationStore.hasOwnProperty(context.conversationId)) {
-                    delete this.conversationStore[context.conversationId];
-                }
+      } else {
+        var m = err.toString();
+        callback(err instanceof Error ? err : new Error(m), null);
+      }
+    });
+    // *
+  };
+  MonoSayBotStorage.prototype.saveData = function (context, data, callback) {
+    var endpoints = [];
+    if (context.userId) {
+      if (context.persistUserData) {
+        endpoints.push({
+          url: `state/channeluser/${context.userId}`,
+          data: JSON.stringify(data.userData || {})
+        });
+      }
+      if (context.conversationId) {
+        endpoints.push({
+          url: `state/channeluser/${context.userId}/conversation/${context.conversationId}`,
+          data: JSON.stringify(data.privateConversationData || {})
+        });
+      }
+    }
+    if (context.persistConversationData && context.conversationId) {
+      endpoints.push({
+        url: `state/conversation/${context.conversationId}`,
+        data: JSON.stringify(data.conversationData || {})
+      });
+    }
+    /// 
+    var monosay = this.monosay;
+    async.each(endpoints, function (endpoint, cb) {
+      monosay.request({
+        url: endpoint.url,
+        body: endpoint.data,
+        method: 'POST'
+      }, function (error, response, body) {
+        if (error) {
+          cb(error);
+        } else {
+          var json = null;
+          var bodyData = null;
+          if (body) {
+            bodyData = JSON.parse(body);
+          }
+
+          if (response.statusCode == 201 || response.statusCode == 200) {
+            if (bodyData && bodyData.success) {
+              data[endpoint.property] = bodyData.data;
+              cb(null);
             } else {
-                delete this.userStore[context.userId];
-                for (var key in this.conversationStore) {
-                    if (key.indexOf(context.userId + ':') == 0) {
-                        delete this.conversationStore[key];
-                    }
-                }
+              cb(bodyData.message || bodyData.internalMessage);
             }
+          } else {
+            cb(`${request.statusCode} ${request.statusMessage}`);
+          }
         }
-    };
-    return MonoSayBotStorage;
+      });
+    }, function (err) {
+      if (!err) {
+        callback(null);
+      } else {
+        var m = err.toString();
+        callback(err instanceof Error ? err : new Error(m), null);
+      }
+    });
+    ///
+  };
+  return MonoSayBotStorage;
 }());
 exports.MonoSayBotStorage = MonoSayBotStorage;

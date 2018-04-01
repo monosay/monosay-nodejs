@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+
 var MicrosoftBotFramework = require("./lib/microsoft");
 var Telegraf = require("./lib/telegraf");
 var Botkit = require("./lib/botkit");

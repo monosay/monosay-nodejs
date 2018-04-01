@@ -26,7 +26,7 @@ module.exports = function(request) {
                     method: 'POST'
                 }, function(error, response, body) {
                     if (error) {
-                        errorCallback(error);
+                        errorCallback && errorCallback(error);
                     } else {
                         var json = null;
                         var data = null;
