@@ -18,7 +18,10 @@ var connector = new builder.ChatConnector({
   appPassword: process.env.BOT_MS_APP_PASSWORD
 });
 
-var bot = new builder.UniversalBot(connector).set("storage", monosay.storage());
+//var storage = new builder.MemoryBotStorage();
+var storage = monosay.storage();
+
+var bot = new builder.UniversalBot(connector).set("storage", storage);
 
 monosay.init(bot);
 

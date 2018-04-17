@@ -1,4 +1,4 @@
-module.exports = function(token, userConfig) {
+module.exports = function (token, userConfig) {
     var core = require("./../core");
 
     if (!token) {
@@ -23,20 +23,37 @@ module.exports = function(token, userConfig) {
     const event = require("./event");
     const storage = require("./storage").MonoSayBotStorage();
 
-    _getContextJson = function(ctx, bodyItself) {
-        return JSON.stringify({
-            data: {
-                message: bodyItself ? ctx : ctx.message,
-            },
-            channelUserId: ctx.chat.id,
-            time: new Date(),
-            isBot: ctx.from.is_bot
-        });
+    _getContextJson = function (ctx, bodyItself) {
+        try {
+            var value = {
+                channelUserId: ctx.chat.id,
+                time: new Date(),
+                isBot: ctx.from.is_bot
+            };
+
+            if (ctx.callbackQuery) {
+                value.data = ctx.callbackQuery;
+            }
+            else {
+                if (bodyItself) {
+                    value.data = ctx;
+                }
+                else {
+                    value.data = {
+                        message: ctx.message
+                    };
+                }
+            }
+
+            return JSON.stringify(value);
+        } catch (error) {
+            return null;
+        }
     };
 
     return {
-        init: function(bot) {
-            bot.use(function({ message, update }, next) {
+        init: function (bot) {
+            bot.use(function ({ message, update }, next) {
                 if (!message) {
                     return next();
                 }
@@ -46,12 +63,21 @@ module.exports = function(token, userConfig) {
 
             bot.use((ctx, next) => {
                 try {
+                    if (ctx && ctx.inlineQuery) {
+                        return next();
+                    }
+
                     var body = _getContextJson(ctx);
+
+                    if (!body) {
+                        return next();
+                    }
+
                     request({
                         url: "/platform",
                         body: body,
                         method: 'POST'
-                    }, function(error, response, body) {
+                    }, function (error, response, body) {
                         if (error) {
                             console.error(error);
                         } else if (response.statusCode != 200 && response.statusCode != 201) {
@@ -67,29 +93,42 @@ module.exports = function(token, userConfig) {
                                         if (!nextitem) {
                                             return;
                                         }
+
+                                        var body = _getContextJson(nextitem, true);
+
+                                        if (!body) {
+                                            return;
+                                        }
+
                                         request({
                                             url: "/platform",
-                                            body: _getContextJson(nextitem, true),
+                                            body: body,
                                             method: 'POST'
-                                        }, function(error, response, body) {
+                                        }, function (error, response, body) {
                                             if (error) {
                                                 console.error(error);
                                             } else if (response.statusCode != 200 && response.statusCode != 201) {
                                                 console.log("Error from MonoSay API");
-                                            } else {}
+                                            } else { }
                                         });
                                     });
                                 } else {
+
+                                    var body = _getContextJson(nctx, true);
+                                    if (!body) {
+                                        return;
+                                    }
+
                                     request({
                                         url: "/platform",
-                                        body: _getContextJson(nctx, true),
+                                        body: body,
                                         method: 'POST'
-                                    }, function(error, response, body) {
+                                    }, function (error, response, body) {
                                         if (error) {
                                             console.error(error);
                                         } else if (response.statusCode != 200 && response.statusCode != 201) {
                                             console.log("Error from MonoSay API");
-                                        } else {}
+                                        } else { }
                                     });
                                 }
                             });
@@ -103,10 +142,10 @@ module.exports = function(token, userConfig) {
         start: base.start,
         end: base.end,
         user: base.user,
-        data: function(name) {
+        data: function (name) {
             return data(request, name);
         },
-        event: function(session, name, data) {
+        event: function (session, name, data) {
             return event(request, session, name, data);
         },
         storage: storage
