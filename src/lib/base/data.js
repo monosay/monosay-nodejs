@@ -6,21 +6,8 @@ module.exports = function (request, name) {
     const dataUrl = "/data/" + name;
     let query = {
         fields: [],
-        filter: [
-            /*
-                {
-                    "field" : "field"
-                    comparison: "gt",
-                    value: 50
-                }
-            */
-        ],
-        orderBy: {
-            /*{
-                "field" : -1 // DESC
-                "field" : 0 // ASC
-            }*/
-        },
+        filter: [],
+        orderBy: {},
         limit: 20, // Paging Limit
         page: 0 // Current Page
     };
@@ -28,35 +15,35 @@ module.exports = function (request, name) {
         query,
         /**
          * Save your data.
-         * @param {object} content Your data.
+         * @param {object} value Your data.
          * @param {function} successCallback Trigger when data saved.
          * @param {function} errorCallback Trigger when something is wrong.
          */
-        save: function (content, successCallback, errorCallback) {
+        save: function (value, successCallback, errorCallback) {
             request({
                 url: dataUrl,
-                body: JSON.stringify(content),
+                body: JSON.stringify(value),
                 method: 'POST'
             }, function (error, response, body) {
                 if (error) {
-                    errorCallback(error);
+                    errorCallback && errorCallback(error);
                 }
                 else {
-                    var json = null;
-                    var data = null;
+                    let json = null;
+                    let data = null;
                     if (body) {
-                        var data = JSON.parse(body);
+                        data = JSON.parse(body);
                     }
                     if (response.statusCode == 201 || response.statusCode == 200) {
                         if (data && data.success) {
-                            successCallback(data);
+                            successCallback && successCallback(data);
                         }
                         else {
-                            errorCallback(data);
+                            errorCallback && errorCallback(data);
                         }
                     }
                     else {
-                        errorCallback(data);
+                        errorCallback && errorCallback(data);
                     }
                 }
             });
@@ -68,12 +55,16 @@ module.exports = function (request, name) {
          * @param {function} errorCallback Trigger when something is wrong.
          */
         delete: function (id, successCallback, errorCallback) {
+            if (!id) {
+                throw "You must send item id that you want to delete.";
+            }
+
             request({
-                url: dataUrl + "/" + id,
+                url: `${dataUrl}/${id}`,
                 method: 'DELETE'
             }, function (error, response, body) {
                 if (error) {
-                    errorCallback(error);
+                    errorCallback && errorCallback(error);
                 }
                 else {
                     var json = null;
@@ -83,14 +74,14 @@ module.exports = function (request, name) {
                     }
                     if (response.statusCode == 201 || response.statusCode == 200) {
                         if (data && data.success) {
-                            successCallback(data);
+                            successCallback && successCallback(data);
                         }
                         else {
-                            errorCallback(data);
+                            errorCallback && errorCallback(data);
                         }
                     }
                     else {
-                        errorCallback(data);
+                        errorCallback && errorCallback(data);
                     }
                 }
             });
@@ -102,27 +93,18 @@ module.exports = function (request, name) {
          * @param {function} errorCallback Trigger when something is wrong.
          */
         get: function (id, successCallback, errorCallback) {
-            var url = id ? `${dataUrl}/${id}` : dataUrl;
-            var method = 'GET';
-
-            if (query.filter) {
-                method = 'POST';
-                url = `${dataUrl}/filter`;
-                if (id) {
-                    if (!query.filter.find(item => item.field === "id")) {
-                        where("id", "==", id);
-                    }
-                }
-                limit(1);
+            if (!id) {
+                throw "You must send item id that you want to get.";
             }
+
+            var url = `${dataUrl}/${id}`;
 
             request({
                 url: url,
-                method: method,
-                body: method === "POST" ? JSON.stringify(query) : null
+                method: 'GET'
             }, function (error, response, body) {
                 if (error) {
-                    errorCallback(error);
+                    errorCallback && errorCallback(error);
                 }
                 else {
                     var json = null;
@@ -132,14 +114,14 @@ module.exports = function (request, name) {
                     }
                     if (response.statusCode == 201 || response.statusCode == 200) {
                         if (data && data.success) {
-                            successCallback(data);
+                            successCallback && successCallback(data);
                         }
                         else {
-                            errorCallback(data);
+                            errorCallback && errorCallback(data);
                         }
                     }
                     else {
-                        errorCallback(data);
+                        errorCallback && errorCallback(data);
                     }
                 }
             });
@@ -156,7 +138,7 @@ module.exports = function (request, name) {
                 body: JSON.stringify(query)
             }, function (error, response, body) {
                 if (error) {
-                    errorCallback(error);
+                    errorCallback && errorCallback(error);
                 }
                 else {
                     var json = null;
@@ -166,14 +148,14 @@ module.exports = function (request, name) {
                     }
                     if (response.statusCode == 201 || response.statusCode == 200) {
                         if (data && data.success) {
-                            successCallback(data);
+                            successCallback && successCallback(data);
                         }
                         else {
-                            errorCallback(data);
+                            errorCallback && errorCallback(data);
                         }
                     }
                     else {
-                        errorCallback(data);
+                        errorCallback && errorCallback(data);
                     }
                 }
             });
