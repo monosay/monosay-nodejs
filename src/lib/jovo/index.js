@@ -19,7 +19,7 @@ module.exports = function(token, userConfig) {
     });
 
     const base = require("./base")(request);
-    const data = require("./data");
+    const data = require("./../base/data");
     const event = require("./event");
     const storage = require("./storage").MonoSayBotStorage();
 

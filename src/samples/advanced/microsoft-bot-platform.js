@@ -43,6 +43,26 @@ bot.dialog('/name', [
 
 bot.dialog("/", [
   function (session) {
+
+    var data = monosay.data('help')
+      .where("field", "==", "test")
+      // I just want need those fields
+      // title, name, price
+      .fields("title,name,price")
+      // name: field, direction descending
+      .orderBy("field", -1)
+      .limit(15)
+      .page(5);
+
+    data.list()
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    return;
     update_monosay_user_info(session);
 
     if (!session.userData.name) {
