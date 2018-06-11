@@ -1,4 +1,4 @@
-module.exports = function(request) {
+module.exports = function (request) {
 
     function trimSession(session) {
         return {
@@ -18,13 +18,13 @@ module.exports = function(request) {
     }
 
     return {
-        user: function(data, successCallback, errorCallback) {
+        user: function (data, successCallback, errorCallback) {
             try {
                 request({
                     url: "/channelusers",
                     body: JSON.stringify(data),
                     method: 'POST'
-                }, function(error, response, body) {
+                }, function (error, response, body) {
                     if (error) {
                         errorCallback(error);
                     } else {
@@ -60,7 +60,7 @@ module.exports = function(request) {
          * @param session object for the current conversation.
          * @param next callback method for bot.
          */
-        send: function(session, next) {
+        send: function (session, next) {
             try {
                 var json = JSON.stringify({
                     data: session,
@@ -72,7 +72,7 @@ module.exports = function(request) {
                     url: "/platform",
                     body: json,
                     method: 'POST'
-                }, function(error, response, body) {
+                }, function (error, response, body) {
                     if (error) {
                         next(error);
                     } else if (response.statusCode != 200 || response.statusCode != 201) {
@@ -91,7 +91,7 @@ module.exports = function(request) {
          * @param session object for the current conversation.
          * @param next callback method for bot.
          */
-        receive: function(session, next) {
+        receive: function (session, next) {
             try {
                 request({
                     url: "/platform",
@@ -101,7 +101,7 @@ module.exports = function(request) {
                         time: new Date()
                     }),
                     method: 'POST'
-                }, function(error, response, body) {
+                }, function (error, response, body) {
                     if (error) {
                         next(error);
                     } else if (response.statusCode != 200 || response.statusCode != 201) {
@@ -118,7 +118,7 @@ module.exports = function(request) {
          * Start new session for user. If that user already have a session, It will close and start new one.
          * @param {session} session 
          */
-        start: function(session) {
+        start: function (session) {
             if (!session) {
                 throw "Session is required.";
             }
@@ -131,9 +131,9 @@ module.exports = function(request) {
                         time: new Date()
                     }),
                     method: 'POST'
-                }, function(error, response, body) {
+                }, function (error, response, body) {
                     if (error) {
-                        if (typeof(errorCallback) != "undefined") {
+                        if (typeof (errorCallback) != "undefined") {
                             errorCallback(error)
                         };
                     } else {
@@ -142,7 +142,7 @@ module.exports = function(request) {
                         if (body) {
                             var data = JSON.parse(body);
                         }
-                        if (typeof(successCallback) != "undefined") {
+                        if (typeof (successCallback) != "undefined") {
                             successCallback(data);
                         }
                     }
@@ -155,7 +155,7 @@ module.exports = function(request) {
          * End user's current session.
          * @param {session} session 
          */
-        end: function(session) {
+        end: function (session) {
             if (!session) {
                 throw "Session is required.";
             }
@@ -168,9 +168,9 @@ module.exports = function(request) {
                         time: session.timestamp
                     }),
                     method: 'PATCH'
-                }, function(error, response, body) {
+                }, function (error, response, body) {
                     if (error) {
-                        if (typeof(errorCallback) != "undefined") {
+                        if (typeof (errorCallback) != "undefined") {
                             errorCallback(error)
                         };
                     } else {
@@ -179,7 +179,7 @@ module.exports = function(request) {
                         if (body) {
                             var data = JSON.parse(body);
                         }
-                        if (typeof(successCallback) != "undefined") {
+                        if (typeof (successCallback) != "undefined") {
                             successCallback(data);
                         }
                     }

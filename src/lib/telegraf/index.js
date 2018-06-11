@@ -23,25 +23,28 @@ module.exports = function (token, userConfig) {
     const event = require("./event");
     const storage = require("./storage").MonoSayBotStorage();
 
+    var isIncognitiveModeEnabled = false;
+
     _getContextJson = function (ctx, bodyItself) {
         try {
             var value = {
                 channelUserId: ctx.chat.id,
                 time: new Date(),
-                isBot: ctx.from.is_bot
+                isBot: ctx.from.is_bot,
+                isPrivate: isIncognitiveModeEnabled
             };
 
-            if (ctx.callbackQuery) {
-                value.data = ctx.callbackQuery;
-            }
-            else {
-                if (bodyItself) {
-                    value.data = ctx;
-                }
-                else {
-                    value.data = {
-                        message: ctx.message
-                    };
+            if (!isIncognitiveModeEnabled) {
+                if (ctx.callbackQuery) {
+                    value.data = ctx.callbackQuery;
+                } else {
+                    if (bodyItself) {
+                        value.data = ctx;
+                    } else {
+                        value.data = {
+                            message: ctx.message
+                        };
+                    }
                 }
             }
 
@@ -53,7 +56,10 @@ module.exports = function (token, userConfig) {
 
     return {
         init: function (bot) {
-            bot.use(function ({ message, update }, next) {
+            bot.use(function ({
+                message,
+                update
+            }, next) {
                 if (!message) {
                     return next();
                 }
@@ -109,7 +115,7 @@ module.exports = function (token, userConfig) {
                                                 console.error(error);
                                             } else if (response.statusCode != 200 && response.statusCode != 201) {
                                                 console.log("Error from MonoSay API");
-                                            } else { }
+                                            } else {}
                                         });
                                     });
                                 } else {
@@ -128,7 +134,7 @@ module.exports = function (token, userConfig) {
                                             console.error(error);
                                         } else if (response.statusCode != 200 && response.statusCode != 201) {
                                             console.log("Error from MonoSay API");
-                                        } else { }
+                                        } else {}
                                     });
                                 }
                             });
@@ -148,6 +154,9 @@ module.exports = function (token, userConfig) {
         event: function (session, name, data) {
             return event(request, session, name, data);
         },
-        storage: storage
+        storage: storage,
+        incognito: function (enabled) {
+            isIncognitiveModeEnabled = enabled;
+        }
     }
 }
