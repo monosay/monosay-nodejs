@@ -321,6 +321,10 @@
   version "10.3.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.2.tgz#3840ec6c12556fdda6e0e6d036df853101d732a4"
 
+"@types/node@^10.1.2":
+  version "10.3.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.3.3.tgz#8798d9e39af2fa604f715ee6a6b19796528e46c3"
+
 "@types/node@^9.6.1":
   version "9.6.21"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.6.21.tgz#4563c26a53531c5aca943065fcdf2dd562f63cd4"
@@ -2461,13 +2465,20 @@ tedious@^2.0.0:
     readable-stream "^2.2.6"
     sprintf-js "^1.1.1"
 
-telegraf@3.18.0:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/telegraf/-/telegraf-3.18.0.tgz#b11ecbabd638783d786b8b0a5be12b49464ef69d"
+telegraf@3.21.2:
+  version "3.21.2"
+  resolved "https://registry.yarnpkg.com/telegraf/-/telegraf-3.21.2.tgz#192a79e8990297377bf2bf03085cb4d00a20d9a8"
   dependencies:
+    "@types/node" "^10.1.2"
     debug "^3.0.0"
     node-fetch "^2.0.0"
     sandwich-stream "^1.0.0"
+    telegram-typings "^3.6.0"
+    typescript "^2.8.3"
+
+telegram-typings@^3.6.0:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/telegram-typings/-/telegram-typings-3.6.1.tgz#1288d547f8694b61f1c01c2993e295f3114d9e25"
 
 test-value@^2.1.0:
   version "2.1.0"
@@ -2541,6 +2552,10 @@ type-is@~1.6.15, type-is@~1.6.16:
   dependencies:
     media-typer "0.3.0"
     mime-types "~2.1.18"
+
+typescript@^2.8.3:
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
 
 typical@^2.6.0, typical@^2.6.1:
   version "2.6.1"

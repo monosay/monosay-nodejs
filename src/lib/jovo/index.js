@@ -20,7 +20,7 @@ module.exports = function(token, userConfig) {
 
     const base = require("./base")(request);
     const data = require("./../base/data");
-    const event = require("./event");
+    const event = require("./../base/event");
     const storage = require("./storage").MonoSayBotStorage();
 
     return {
@@ -95,9 +95,9 @@ module.exports = function(token, userConfig) {
         data: function(name) {
             return data(request, name);
         },
-        event: function(session, name, data) {
-            return event(request, session, name, data);
-        },
+        event: function(userId, name, data) {
+			return event(request, userId, name, data);
+		},
         storage: storage
     }
 }
