@@ -1,3 +1,5 @@
+const Promise = require('promise');
+
 /**
  * Save your data to MonoSay Backend.
  * @param {string} name Your collection name.
@@ -20,32 +22,37 @@ module.exports = function (request, name) {
          * @param {function} errorCallback Trigger when something is wrong.
          */
         save: function (value, successCallback, errorCallback) {
-            request({
-                url: dataUrl,
-                body: JSON.stringify(value),
-                method: 'POST'
-            }, function (error, response, body) {
-                if (error) {
-                    errorCallback && errorCallback(error);
-                }
-                else {
-                    let json = null;
-                    let data = null;
-                    if (body) {
-                        data = JSON.parse(body);
+            return new Promise(function (resolve, reject) {
+                request({
+                    url: dataUrl,
+                    body: JSON.stringify(value),
+                    method: 'POST'
+                }, function (error, response, body) {
+                    if (error) {
+                        errorCallback && errorCallback(error);
+                        reject && reject(error);
                     }
-                    if (response.statusCode == 201 || response.statusCode == 200) {
-                        if (data && data.success) {
-                            successCallback && successCallback(data);
+                    else {
+                        let data = null;
+                        if (body) {
+                            data = JSON.parse(body);
+                        }
+                        if (response.statusCode == 201 || response.statusCode == 200) {
+                            if (data && data.success) {
+                                successCallback && successCallback(data);
+                                resolve && resolve(data);
+                            }
+                            else {
+                                errorCallback && errorCallback(data);
+                                reject && reject(data);
+                            }
                         }
                         else {
                             errorCallback && errorCallback(data);
+                            reject && reject(data);
                         }
                     }
-                    else {
-                        errorCallback && errorCallback(data);
-                    }
-                }
+                });
             });
         },
         /**
@@ -55,35 +62,40 @@ module.exports = function (request, name) {
          * @param {function} errorCallback Trigger when something is wrong.
          */
         delete: function (id, successCallback, errorCallback) {
-            if (!id) {
-                throw "You must send item id that you want to delete.";
-            }
-
-            request({
-                url: `${dataUrl}/${id}`,
-                method: 'DELETE'
-            }, function (error, response, body) {
-                if (error) {
-                    errorCallback && errorCallback(error);
+            return new Promise(function (resolve, reject) {
+                if (!id) {
+                    throw "You must send item id that you want to delete.";
                 }
-                else {
-                    var json = null;
-                    var data = null;
-                    if (body) {
-                        var data = JSON.parse(body);
+
+                request({
+                    url: `${dataUrl}/${id}`,
+                    method: 'DELETE'
+                }, function (error, response, body) {
+                    if (error) {
+                        errorCallback && errorCallback(error);
+                        reject && reject(error);
                     }
-                    if (response.statusCode == 201 || response.statusCode == 200) {
-                        if (data && data.success) {
-                            successCallback && successCallback(data);
+                    else {
+                        var data = null;
+                        if (body) {
+                            var data = JSON.parse(body);
+                        }
+                        if (response.statusCode == 201 || response.statusCode == 200) {
+                            if (data && data.success) {
+                                successCallback && successCallback(data);
+                                resolve && resolve(data);
+                            }
+                            else {
+                                errorCallback && errorCallback(data);
+                                reject && reject(data);
+                            }
                         }
                         else {
                             errorCallback && errorCallback(data);
+                            reject && reject(data);
                         }
                     }
-                    else {
-                        errorCallback && errorCallback(data);
-                    }
-                }
+                });
             });
         },
         /**
@@ -93,37 +105,42 @@ module.exports = function (request, name) {
          * @param {function} errorCallback Trigger when something is wrong.
          */
         get: function (id, successCallback, errorCallback) {
-            if (!id) {
-                throw "You must send item id that you want to get.";
-            }
-
-            var url = `${dataUrl}/${id}`;
-
-            request({
-                url: url,
-                method: 'GET'
-            }, function (error, response, body) {
-                if (error) {
-                    errorCallback && errorCallback(error);
+            return new Promise(function (resolve, reject) {
+                if (!id) {
+                    throw "You must send item id that you want to get.";
                 }
-                else {
-                    var json = null;
-                    var data = null;
-                    if (body) {
-                        var data = JSON.parse(body);
+
+                var url = `${dataUrl}/${id}`;
+
+                request({
+                    url: url,
+                    method: 'GET'
+                }, function (error, response, body) {
+                    if (error) {
+                        errorCallback && errorCallback(error);
+                        reject && reject(error);
                     }
-                    if (response.statusCode == 201 || response.statusCode == 200) {
-                        if (data && data.success) {
-                            successCallback && successCallback(data);
+                    else {
+                        var data = null;
+                        if (body) {
+                            var data = JSON.parse(body);
+                        }
+                        if (response.statusCode == 201 || response.statusCode == 200) {
+                            if (data && data.success) {
+                                successCallback && successCallback(data);
+                                resolve && resolve(data);
+                            }
+                            else {
+                                errorCallback && errorCallback(data);
+                                reject && reject(data);
+                            }
                         }
                         else {
                             errorCallback && errorCallback(data);
+                            reject && reject(data);
                         }
                     }
-                    else {
-                        errorCallback && errorCallback(data);
-                    }
-                }
+                });
             });
         },
         /**
@@ -132,32 +149,36 @@ module.exports = function (request, name) {
          * @param {function} errorCallback Trigger when something is wrong.
          */
         list: function (successCallback, errorCallback) {
-            request({
-                url: `${dataUrl}/filter`,
-                method: 'POST',
-                body: JSON.stringify(query)
-            }, function (error, response, body) {
-                if (error) {
-                    errorCallback && errorCallback(error);
-                }
-                else {
-                    var json = null;
-                    var data = null;
-                    if (body) {
-                        var data = JSON.parse(body);
+            return new Promise(function (resolve, reject) {
+                request({
+                    url: `${dataUrl}/filter`,
+                    method: 'POST',
+                    body: JSON.stringify(query)
+                }, function (error, response, body) {
+                    if (error) {
+                        errorCallback && errorCallback(error);
                     }
-                    if (response.statusCode == 201 || response.statusCode == 200) {
-                        if (data && data.success) {
-                            successCallback && successCallback(data);
+                    else {
+                        var data = null;
+                        if (body) {
+                            var data = JSON.parse(body);
+                        }
+                        if (response.statusCode == 201 || response.statusCode == 200) {
+                            if (data && data.success) {
+                                successCallback && successCallback(data);
+                                resolve && resolve(data);
+                            }
+                            else {
+                                errorCallback && errorCallback(data);
+                                reject && reject(data);
+                            }
                         }
                         else {
                             errorCallback && errorCallback(data);
+                            reject && reject(data);
                         }
                     }
-                    else {
-                        errorCallback && errorCallback(data);
-                    }
-                }
+                });
             });
         },
         /**

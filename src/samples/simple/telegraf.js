@@ -32,7 +32,17 @@ bot.command("event", ctx => {
 	return promises;
 });
 bot.command("help", ctx => ctx.reply("Try send a sticker!"));
-bot.hears("hi", ctx => ctx.reply("Hey there!"));
+bot.hears("hi", async ctx => {
+	let result = await monosay.data('my').save({ data: { "message": "This is my data" } });
+
+	monosay.data('my').save({ data: { "message": "This is my data" } }, function (data) {
+		console.log("This is inner callback.");
+		console.log(data);
+	});
+
+	console.log(result);
+	return ctx.reply("Hey there!");
+});
 bot.hears("who am i", ctx => ctx.reply("I know who you are! 😌 You are! 😗"));
 bot.hears("You know nothing Jon Snow!", ctx => ctx.reply("See you later! 😎 But I'm not John Snow!"));
 bot.hears(/buy/i, ctx => ctx.reply("Buy-buy!"));
