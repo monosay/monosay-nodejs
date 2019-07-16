@@ -9,7 +9,7 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 monosay.init(bot);
 
 const collection = "todo";
-const help = "`/add todo description` - will add a new todo\n`/list` - will list your todo \n`/done number` - will set your todo as done\n`/remove number` - will remoe your todo";
+const help = "`/add todo description` - will add a new todo\n`/list` - will list your todo \n`/done number` - will set your todo as done\n`/remove number` - will remove your todo";
 
 /**
  * Let's make a todo application via
