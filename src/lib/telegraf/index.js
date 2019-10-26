@@ -1,159 +1,178 @@
-module.exports = function (token, userConfig) {
-    var core = require("./../core");
+module.exports = function(token, userConfig) {
+  var core = require("./../core");
 
-    if (!token) {
-        console.error("MonoSay Bot Token is not found.");
-        throw "You set your bot token.";
-    }
+  if (!token) {
+    console.error("MonoSay Bot Token is not found.");
+    throw "You set your bot token.";
+  }
 
-    console.debug("MonoSay Initialized for Telegraf.");
+  console.debug("MonoSay Initialized for Telegraf.");
 
-    Object.assign(core.config, userConfig);
-    console.debug("MonoSay API Url is " + core.config.apiUrl);
+  Object.assign(core.config, userConfig);
+  console.debug("MonoSay API Url is " + core.config.apiUrl);
 
-    core.config.headers["Authorization"] = "Bot " + token;
+  core.config.headers["Authorization"] = "Bot " + token;
 
-    const request = require("request").defaults({
-        baseUrl: core.config.apiUrl,
-        headers: core.config.headers
-    });
+  const request = require("request").defaults({
+    baseUrl: core.config.apiUrl,
+    headers: core.config.headers
+  });
 
-    const base = require("./base")(request);
-    const data = require("./../base/data");
-    const event = require("./../base/event");
-    const storage = require("./storage").MonoSayBotStorage();
+  const base = require("./base")(request);
+  const data = require("./../base/data");
+  const event = require("./../base/event");
 
-    var isIncognitiveModeEnabled = false;
+  var isIncognitiveModeEnabled = false;
 
-    _getContextJson = function (ctx, bodyItself) {
-        try {
-            var value = {
-                channelUserId: ctx.chat.id,
-                time: new Date(),
-                isBot: ctx.from.is_bot,
-                isPrivate: isIncognitiveModeEnabled
+  _getContextJson = function(ctx, bodyItself) {
+    try {
+      var value = {
+        channelUserId: ctx.chat.id,
+        time: new Date(),
+        isBot: ctx.from.is_bot,
+        isPrivate: isIncognitiveModeEnabled
+      };
+
+      if (!isIncognitiveModeEnabled) {
+        if (ctx.callbackQuery) {
+          value.data = ctx.callbackQuery;
+        } else {
+          if (bodyItself) {
+            value.data = ctx;
+          } else {
+            value.data = {
+              message: ctx.message
             };
-
-            if (!isIncognitiveModeEnabled) {
-                if (ctx.callbackQuery) {
-                    value.data = ctx.callbackQuery;
-                } else {
-                    if (bodyItself) {
-                        value.data = ctx;
-                    } else {
-                        value.data = {
-                            message: ctx.message
-                        };
-                    }
-                }
-            }
-
-            return JSON.stringify(value);
-        } catch (error) {
-            return null;
+          }
         }
-    };
+      }
 
-    return {
-        init: function (bot) {
-            bot.use(function ({
-                message,
-                update
-            }, next) {
-                if (!message) {
-                    return next();
-                }
-                // message.text = aliasToCommand(message.text);
-                next()
-            });
+      return JSON.stringify(value);
+    } catch (error) {
+      return null;
+    }
+  };
 
-            bot.use((ctx, next) => {
-                try {
-                    if (ctx && ctx.inlineQuery) {
-                        return next();
-                    }
+  return {
+    base: base,
+    request: request,
+    init: function(bot) {
+      bot.use(function({ message, update }, next) {
+        if (!message) {
+          return next();
+        }
+        next();
+      });
 
-                    var body = _getContextJson(ctx);
+      bot.use((ctx, next) => {
+        try {
+          if (ctx && ctx.inlineQuery) {
+            return next();
+          }
 
+          var body = _getContextJson(ctx);
+
+          if (!body) {
+            return next();
+          }
+
+          request(
+            {
+              url: "/platform",
+              body: body,
+              method: "POST"
+            },
+            function(error, response, body) {
+              if (error) {
+                console.error(error);
+              } else if (
+                response.statusCode != 200 &&
+                response.statusCode != 201
+              ) {
+                console.log("Error from MonoSay API");
+              } else {
+                next(ctx).then(nctx => {
+                  if (!nctx) {
+                    return;
+                  }
+
+                  if (Array.isArray(nctx)) {
+                    nctx.map(nextitem => {
+                      if (!nextitem) {
+                        return;
+                      }
+
+                      var body = _getContextJson(nextitem, true);
+
+                      if (!body) {
+                        return;
+                      }
+
+                      request(
+                        {
+                          url: "/platform",
+                          body: body,
+                          method: "POST"
+                        },
+                        function(error, response, body) {
+                          if (error) {
+                            console.error(error);
+                          } else if (
+                            response.statusCode != 200 &&
+                            response.statusCode != 201
+                          ) {
+                            console.log("Error from MonoSay API");
+                          } else {
+                          }
+                        }
+                      );
+                    });
+                  } else {
+                    var body = _getContextJson(nctx, true);
                     if (!body) {
-                        return next();
+                      return;
                     }
 
-                    request({
+                    request(
+                      {
                         url: "/platform",
                         body: body,
-                        method: 'POST'
-                    }, function (error, response, body) {
+                        method: "POST"
+                      },
+                      function(error, response, body) {
                         if (error) {
-                            console.error(error);
-                        } else if (response.statusCode != 200 && response.statusCode != 201) {
-                            console.log("Error from MonoSay API");
+                          console.error(error);
+                        } else if (
+                          response.statusCode != 200 &&
+                          response.statusCode != 201
+                        ) {
+                          console.log("Error from MonoSay API");
                         } else {
-                            next(ctx).then((nctx) => {
-                                if (!nctx) {
-                                    return;
-                                }
-
-                                if (Array.isArray(nctx)) {
-                                    nctx.map((nextitem) => {
-                                        if (!nextitem) {
-                                            return;
-                                        }
-
-                                        var body = _getContextJson(nextitem, true);
-
-                                        if (!body) {
-                                            return;
-                                        }
-
-                                        request({
-                                            url: "/platform",
-                                            body: body,
-                                            method: 'POST'
-                                        }, function (error, response, body) {
-                                            if (error) {
-                                                console.error(error);
-                                            } else if (response.statusCode != 200 && response.statusCode != 201) {
-                                                console.log("Error from MonoSay API");
-                                            } else {}
-                                        });
-                                    });
-                                } else {
-
-                                    var body = _getContextJson(nctx, true);
-                                    if (!body) {
-                                        return;
-                                    }
-
-                                    request({
-                                        url: "/platform",
-                                        body: body,
-                                        method: 'POST'
-                                    }, function (error, response, body) {
-                                        if (error) {
-                                            console.error(error);
-                                        } else if (response.statusCode != 200 && response.statusCode != 201) {
-                                            console.log("Error from MonoSay API");
-                                        } else {}
-                                    });
-                                }
-                            });
                         }
-                    });
-                } catch (error) {
-                    console.error(error);
-                }
-            });
-        },
-        start: base.start,
-        end: base.end,
-        user: base.user,
-        data: function (name) {
-            return data(request, name);
-        },
-        event: function(userId, name, data, successCallback, errorCallback) {
-			return event(request, userId, name, data, successCallback, errorCallback);
-		},
-        storage: storage
+                      }
+                    );
+                  }
+                });
+              }
+            }
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    },
+    start: base.start,
+    end: base.end,
+    user: base.user,
+    data: function(name) {
+      return data(request, name);
+    },
+    event: function(userId, name, data, successCallback, errorCallback) {
+      return event(request, userId, name, data, successCallback, errorCallback);
+    },
+    storage: function(options) {
+      const MonoSayBotStorage = require("./storage");
+      return new MonoSayBotStorage(this, options);
     }
-}
+  };
+};
