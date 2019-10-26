@@ -1,6 +1,6 @@
 {
     "name": "monosay",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "Your bot's powerfull friend.",
     "main": "index.js",
     "scripts": {},
@@ -28,6 +28,7 @@
     },
     "keywords": [
         "messenger",
+        "telegraf",
         "telegram",
         "botbuilder",
         "jovo",
