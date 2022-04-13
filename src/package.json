@@ -15,7 +15,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "async": "^2.6.3",
+        "async": "^3.2.2",
         "promise": "^8.0.3",
         "request": "^2.88.0"
     },
